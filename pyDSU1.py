@@ -2,81 +2,68 @@ import socket
 import struct
 import zlib
 
-def create_version_response():
-    """
-    Create the DSU version response with the correct structure and CRC.
-    :return: Version response packet (bytes).
-    """
-    # Response fields
-    header = b"DSUC"  # Identifier
-    protocol_version = 1001  # DSU protocol version (0x000003E9)
-    message_length = 12  # Length of the message following the header
-    crc_placeholder = 0  # Placeholder for CRC
+# protocol: https://github.com/v1993/cemuhook-protocol
 
-    num_controllers = 4  # Number of supported controllers (adjustable)
-    controllers_connected = 1  # How many controllers are connected
+class UDPDSU:
+    MSG_TYP = {
+        'protocol_version': int(0x100000),
+        'connected_controllers': 0x100001,
+        'controller_data': 0x100002,
+        'information_about_motors': 0x110001,  # unofficial
+        'rumble_motor' : 0x110002              # unofficial
+    }
+    def __init__(self, host="127.0.0.1", port=26760):
+        self.host = host
+        self.port = port
 
-    # Step 1: Construct the header (without CRC)
-    response = struct.pack(
-        ">4sIHHI",  # Format: Identifier | Protocol Version | Length | Padding | CRC Placeholder
-        header,
-        protocol_version,
-        message_length,
-        0,  # Padding
-        crc_placeholder,
-    )
+        # Create a UDP socket
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.server_socket.bind((self.host, self.port))
+        print(f"DSU server is running on {self.host}:{self.port}")
 
-    # Step 2: Append controller-specific data
-    response += struct.pack(">I", num_controllers)  # Number of controllers
-    response += struct.pack(">I", controllers_connected)  # Controllers connected
-    response += struct.pack(">I", 0)  # Reserved / Padding
+    def handle_dolphin_requests(self):
+        while True:
+            try:
+                message, client_address = self.server_socket.recvfrom(1024)
+                self.client_address = client_address
+                print(f"Received {len(message)}-byte message from {client_address}: {message.hex()}")
+                print( repr(message) )
 
-    # Step 3: Calculate CRC for the response
-    crc = zlib.crc32(response)
-    response = response[:12] + struct.pack(">I", crc) + response[16:]  # Insert CRC at the correct offset
+                # Check if this is a version request (28 bytes long)
+                if len(message) == 28:
+                    print(f"Recognized version request from {client_address}")
 
-    return response
+                    # Create and send the version response
+                    response = self.version_request()
+                    print( repr(response) )
+                    self.send_packet(response)
+                    print(f"Sent version response to {client_address}")
 
-def handle_client(server_socket):
-    """
-    Handle incoming requests from Dolphin.
-    :param server_socket: The UDP server socket.
-    """
-    while True:
-        try:
-            # Receive a message from Dolphin
-            message, client_address = server_socket.recvfrom(1024)
+            except Exception as e:
+                print(f"Error handling client: {e}")
 
-            # Log the incoming message details
-            print(f"Received {len(message)}-byte message from {client_address}: {message.hex()}")
+    def send_packet(self, packet):
+        self.server_socket.sendto(packet, self.client_address)
 
-            # Check if this is a version request (28 bytes long)
-            if len(message) == 28:
-                print(f"Recognized version request from {client_address}")
+    def add_header_before(self, packet_data):
+        magic_string = b"DSUC"
+        protocol_version = 1001
+        message_length = len(packet_data)
+        crc_placeholder = 0
+        client_id = 0
 
-                # Create and send the version response
-                response = create_version_response()
-                server_socket.sendto(response, client_address)
-                print(f"Sent version response to {client_address}")
+        response1 = struct.pack(">4sIHLL", magic_string, protocol_version, message_length, crc_placeholder, client_id)
+        
+        crc = zlib.crc32(response1 + packet_data)
 
-        except Exception as e:
-            print(f"Error handling client: {e}")
-
-def start_dsu_server():
-    """
-    Start the DSU server.
-    """
-    # DSU server address and port
-    host = "127.0.0.1"
-    port = 26760
-
-    # Create a UDP socket
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server_socket.bind((host, port))
-    print(f"DSU server is running on {host}:{port}")
-
-    # Handle incoming requests
-    handle_client(server_socket)
+        return struct.pack(">4sIHLL", magic_string, protocol_version, message_length, crc, client_id) + packet_data
+    
+    def version_request(self):
+        chars = b'H'
+        protocol_version = 1001
+        packet_data = struct.pack(chars, protocol_version)
+        return self.add_header_before(packet_data)
 
 if __name__ == "__main__":
-    start_dsu_server()
+    server = UDPDSU()
+    server.handle_dolphin_requests()
