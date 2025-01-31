@@ -128,4 +128,4 @@ div.btn.pressed {
     aspect-ratio: 1;
     background-color: #8f8f8f;
 }
-#lights div.on { background-color: #38f2ff; }
+#lights div.on { background-color: #38f2ff; box-shadow: 0 0 11px 2px #48c8ff; }
