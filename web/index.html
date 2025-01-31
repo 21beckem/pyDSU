@@ -5,105 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link href='https://fonts.googleapis.com/css?family=ADLaM Display' rel='stylesheet'>
     <title>Wii Remote Emulator</title>
-    <style>
-:root {
-    --dpad-radius: 10px;
-}
-body {
-    font-family: 'ADLaM Display';
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
-    display: flex;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background: #eaeaea;
-    overflow: hidden;
-    flex-direction: column;
-    touch-action: manipulation;
-    color: #383838;
-}
-
-.dpad {
-    margin-top: 40px;
-    display: flex;
-    flex-wrap: wrap;
-    width: 150px;
-    aspect-ratio: 1;
-    filter: drop-shadow(0px 0px 4px gray);
-}
-.dpad div {
-    flex: 0 0 33.3333%;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    filter: none !important;
-}
-div.btn, .dpad div.ctr {
-    background: #dadada;
-    filter: drop-shadow(0px 0px 4px gray);
-}
-div.btn.pressed {
-    background: #acacac;
-}
-.dpad div.btn#padUp   { border-radius: var(--dpad-radius) var(--dpad-radius) 0 0; }
-.dpad div.btn#padLeft { border-radius: var(--dpad-radius) 0 0 var(--dpad-radius); }
-.dpad div.btn#padRight{ border-radius: 0 var(--dpad-radius) var(--dpad-radius) 0; }
-.dpad div.btn#padDown { border-radius: 0 0 var(--dpad-radius) var(--dpad-radius); }
-
-#aBtn {
-    margin-top: 50px;
-    width: 150px;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 30px;
-}
-
-#homeRow {
-    margin-top: 30px;
-    width: 200px;
-    display: flex;
-    justify-content: space-between;
-}
-#homeRow div {
-    width: 30px;
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-#homeRow div#homeBtn svg {
-    transform: scale(0.7);
-}
-#numBtns {
-    margin-top: 60px;
-    width: 50px;
-    height: 120px;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-#numBtns div {
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body onload="attemptFullscreen()">
+<body>
+    <div class="bTri one">
+        <div class="btn" id="bBtn1"></div>
+        <div class="text">B</div>
+    </div>
+    <div class="bTri two">
+        <div class="btn" id="bBtn2"></div>
+        <div class="text">B</div>
+    </div>
+
     <div class="dpad">
         <div></div>
         <div class="btn" id="padUp">▲</div>
@@ -129,6 +42,12 @@ div.btn.pressed {
         <div class="btn" id="2Btn">2</div>
     </div>
 
+    <div id="lights">
+        <div class="on" id="light1"></div>
+        <div id="light2"></div>
+        <div id="light3"></div>
+        <div id="light4"></div>
+    </div>
     
     <script src="remote.js"></script>
 </body>
