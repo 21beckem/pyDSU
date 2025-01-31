@@ -14,13 +14,15 @@ function attemptFullscreen() {
 
 // add haptic feedback for all buttons and ensure the page is in fullscreen
 document.querySelectorAll('div.btn').forEach(div => {
-    div.addEventListener('mousedown', event => {
+    div.addEventListener('touchstart', event => {
         console.log(`div ${event.target.id} pressed`);
+        event.target.classList.add('pressed');
         attemptFullscreen();
         hapticFeedback();
     });
-    div.addEventListener('mouseup', event => {
+    div.addEventListener('touchend', event => {
         console.log(`div ${event.target.id} released`);
+        event.target.classList.remove('pressed');
         hapticFeedback();
     });
 });
