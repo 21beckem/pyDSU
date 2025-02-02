@@ -33,16 +33,15 @@ class UDPDSU:
         return binascii.crc32(p) & 0xffffffff
     
     def decode_packet(self, packet):
-        print('received packet:', packet)
+        # print('received packet:', packet)
         magic_string, protocol_version, message_length, crc, client_id, message_type = struct.unpack('<4sHHLLL', packet[0:20])
         # print('magic_string:', magic_string)
         # print('protocol_version:', protocol_version)
         # print('message_length:', message_length)
-        print('crc:', crc)
-        print('computed_crc:', self.compute_crc(packet))
+        # print('crc:', crc)
         # print('client_id:', client_id)
         # print('message_type:', message_type)
-        # print('message_type:', UDPDSU.MSG_TYP[message_type])
+        print('message_type:', UDPDSU.MSG_TYP[message_type])
         
         return UDPDSU.MSG_TYP[message_type], message_type, packet[20:]
 
@@ -64,7 +63,7 @@ class UDPDSU:
                 elif decoded_type == 'Information about connected controllers':
                     self.controller_info_request(encoded_type, msg_data)
                 elif decoded_type == 'Actual controllers data':
-                    pass
+                    print('requested actual controllers data!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 elif decoded_type == '(Unofficial) Information about controller motors':
                     pass
                 elif decoded_type == '(Unofficial) Rumble controller motor':
@@ -84,18 +83,18 @@ class UDPDSU:
 
         # crc = 0x15542c26
         crc = self.compute_crc(response1 + packet_data)
-        print('crc:', hex(crc))
+        # print('crc:', hex(crc))
 
         response2 = struct.pack("<4sHHLL", b"DSUS", 1001, len(packet_data), crc, 0)
         # print('response2 len:', len(response2))
         full_packet = response2 + packet_data
-        print('full_packet:', full_packet)
-        print('packet len:', len(full_packet))
-        print('second crc:', hex( binascii.crc32(full_packet) ))
+        # print('full_packet:', full_packet)
+        # print('packet len:', len(full_packet))
+        # print('second crc:', hex( binascii.crc32(full_packet) ))
         return full_packet
     
     def create_controller_info_intro(self, port, state):
-        return struct.pack(b'<BBBB6sB', port, state, 2, 0, b'000000', 0x05)
+        return struct.pack(b'<BBBB', int(port), int(state), 0, 0) + struct.pack("<Q", 0)[:6] + struct.pack(b'<B', 0x04)
     
     def version_request(self, encoded_msg_type, msg_data):
         packet_data = struct.pack(b'<H', 1001)
@@ -103,10 +102,10 @@ class UDPDSU:
     
     def controller_info_request(self, encoded_msg_type, msg_data):
         # read rest of msg_data
-        print('msg_data:', msg_data)
+        # print('msg_data:', msg_data)
         nOfPorts = struct.unpack('<l', msg_data[0:4])[0]
         ports_bytes = msg_data[4:]
-        print('nOfPorts:', nOfPorts)
+        # print('nOfPorts:', nOfPorts)
         ports = []
         for i in range(nOfPorts):
             ports.append( int(struct.unpack('<B', ports_bytes[0:1])[0]) )
@@ -114,11 +113,10 @@ class UDPDSU:
         
         for port in ports:
             # create packet reporting on the port
-            connectedState = 1
+            connectedState = 2
             packet_data = self.create_controller_info_intro(port, connectedState) + struct.pack(b'<B', 0)
 
             self.send_packet( self.add_header(encoded_msg_type, packet_data) )
-            return
 
 
 if __name__ == "__main__":
