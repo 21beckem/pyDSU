@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playroom Host</title>
+    <script src="https://cdn.jsdelivr.net/npm/@playroomkit/client"></script>
+    <script type="text/javascript" src="eel.js"></script>
+</head>
+<body>
+    <h1>Playroom Game</h1>
+    <p>Game Code: <span id="gameCode">...</span></p>
+    <p>Players Connected: <span id="playerCount">0</span>/4</p>
+
+    <script>
+        let game = new playroom.Game();
+        document.getElementById("gameCode").innerText = game.code;
+
+        game.on("playerjoin", async (player) => {
+            let response = await eel.join_game(player.id)();
+            if (response.success) {
+                player.number = response.player_number;
+                document.getElementById("playerCount").innerText = Object.keys(game.players).length;
+                player.on("gyro", data => {
+                    eel.receive_gyro_data(player.number, data);
+                });
+            } else {
+                player.kick(response.message);
+            }
+        });
+    </script>
+</body>
+</html>
