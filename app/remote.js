@@ -1,5 +1,4 @@
 function attemptFullscreen() {
-    return;
     let elem = document.documentElement;
     if (elem.requestFullscreen) {
         elem.requestFullscreen();
@@ -9,6 +8,11 @@ function attemptFullscreen() {
         elem.webkitRequestFullscreen();
     } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
+    }
+
+    // request wake lock too
+    if (navigator.requestWakeLock) {
+        navigator.wakeLock.request("screen");
     }
 }
 

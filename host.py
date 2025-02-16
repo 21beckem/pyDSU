@@ -1,8 +1,18 @@
 import eel
 import json
+import tkinter as tk
 
 # Initialize the eel app
 eel.init("web")
+
+def center_screen(width, height):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width / 2) - (width / 2)
+    y = (screen_height / 2) - (height / 2)
+    return { 'x': int(x), 'y': int(y) }
+root = tk.Tk()
+root.withdraw()  # Hide the tkinter window
 
 # Store player connections
 players = {}
@@ -24,16 +34,24 @@ def join_game(player_id):
     slot = get_available_slot()
     if slot is not None:
         players[slot] = player_id
-        return {"success": True, "player_number": slot}
+        return {"success": True, "slot": slot}
     return {"success": False, "message": "No available slots"}
 
 @eel.expose
-def receive_gyro_data(player_number, data):
+def player_left(slot):
+    """Handle a player leaving the game."""
+    del players[slot]
+
+@eel.expose
+def receive_gyro_data(slot, data):
     """Receive gyroscope data from players."""
-    if player_number in players:
-        print(f"Received data from Player {player_number}: {json.dumps(data)}")
+    if slot in players:
+        print(f"Received data from Player {slot}: {json.dumps(data)}")
     else:
         print("Received data from unknown player")
 
 if __name__ == "__main__":
-    eel.start("app.html", size=(600, 400), mode='edge')
+    window_width = 800
+    window_height = 600
+    geo = center_screen(window_width, window_height)
+    eel.start("app.html", mode='edge', size=(window_width, window_height), position=(geo['x'], geo['y']))
