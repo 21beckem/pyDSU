@@ -54,4 +54,4 @@ if __name__ == "__main__":
     window_width = 800
     window_height = 600
     geo = center_screen(window_width, window_height)
-    eel.start("app.html", mode='edge', size=(window_width, window_height), position=(geo['x'], geo['y']))
+    eel.start("host.html", mode='edge', size=(window_width, window_height), position=(geo['x'], geo['y']))

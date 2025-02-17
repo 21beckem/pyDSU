@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Becker WII</title>
+    <script src="https://unpkg.com/playroomkit/multiplayer.full.umd.js" crossorigin="anonymous"></script>
+    <style>
+@font-face {
+    font-family: 'Wii';
+    src: url('fonts/wii.ttf') format('truetype');
+}
+body {
+    font-family: 'Wii', sans-serif;
+}
+#title {
+    font-family: 'Wii', sans-serif;
+    font-size: 100px;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0px 0px 10px #000;
+    margin: 50px 0 30px 0;
+}
+#gameCode {
+    font-family: 'Wii', sans-serif, monospace;
+    border: 5px solid #54b9de;
+    border-radius: 10px;
+    width: fit-content;
+    padding: 0 20px 0 30px;
+    font-size: 70px;
+    letter-spacing: 15px;
+    color: #323232;
+    background-color: #e0e5ea;
+    box-shadow: 2px 2px 18px 13px white inset;
+}
+.wiiBtn {
+    font-family: 'Wii', sans-serif;
+    font-size: 30px;
+    letter-spacing: 1px;
+    color: #323232;
+    height: 60px;
+    width: 170px;
+    border-radius: 30px;
+    border: solid #53bee6;
+    background-color: #e0e5ea;
+    box-shadow: 2px 2px 12px 7px white inset;
+    filter: drop-shadow(0px 0px 1px #53bee6);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+.wiiBtn:hover {
+    transform: scale(1.1);
+}
+    </style>
+    <script type="text/javascript" src="eel.js"></script>
+</head>
+<body>
+    <h1 id="title">Becker WII</h1>
+    <center>
+        <a>Game Code:</a>
+        <div id="gameCode">...</div>
+        <p>Players Connected: <span id="playerCount">0</span>/4</p>
+        <div style="height: 20px;"></div>
+        <button class="wiiBtn" onclick="alert('Would start now...');">Start</button>
+    </center>
+
+    <script src="host.js"></script>
+</body>
+</html>
