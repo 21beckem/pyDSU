@@ -1,9 +1,50 @@
 :root {
     --dpad-radius: 10px;
     --bBtn-size: 170px;
+    --bBtn-top: 120px;
 }
 body {
+    margin: 0;
+    padding: 0;
+    background: #eaeaea;
     font-family: 'ADLaM Display';
+}
+#connectPage {
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    flex-direction: column;
+    touch-action: manipulation;
+    color: #383838;
+}
+#gameCode {
+    margin-top: 10px;
+    font-family: inherit;
+    font-size: 40px;
+    border-radius: 10px;
+    padding: 5px 20px;
+    text-align: center;
+    width: 100px;
+    text-transform: uppercase;
+    color: #323232;
+    border: solid black 1px;
+}
+.wiiUIbtn {
+    font-family: inherit;
+    font-size: 30px;
+    letter-spacing: 1px;
+    color: #323232;
+    height: 60px;
+    width: 170px;
+    border: solid black 2px;
+    border-radius: 20px;
+    background-color: white;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+#RemotePage {
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
@@ -11,16 +52,16 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background: #eaeaea;
     overflow: hidden;
     flex-direction: column;
     touch-action: manipulation;
     color: #383838;
+    justify-content: space-evenly;
 }
 
 .bTri .btn {
     position: fixed;
-    top: 120px;
+    top: var(--bBtn-top);
     width: var(--bBtn-size);
     height: var(--bBtn-size);
     border-radius: 20px;
@@ -34,7 +75,7 @@ body {
 .bTri.two .text { right: 30px }
 .bTri .text {
     position: fixed;
-    top: 180px;
+    top: calc( var(--bBtn-top) + 60px);
     font-size: 32px;
     z-index: 1;
     pointer-events: none;
@@ -102,7 +143,7 @@ div.btn.pressed {
 #numBtns {
     margin-top: 60px;
     width: 50px;
-    height: 120px;
+    height: 130px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -122,6 +163,7 @@ div.btn.pressed {
     width: 200px;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
 }
 #lights div {
     width: 15px;

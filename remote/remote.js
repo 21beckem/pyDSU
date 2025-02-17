@@ -16,6 +16,12 @@ function attemptFullscreen() {
         navigator.wakeLock.request("screen");
     }
 }
+function setBposition() {
+    let dist = document.getElementById('aBtn').getBoundingClientRect().top - 127.5;
+    document.documentElement.style.setProperty('--bBtn-top', `${dist}px`);
+}
+setBposition();
+window.addEventListener('resize', setBposition);
 
 // add haptic feedback for all buttons and ensure the page is in fullscreen
 document.querySelectorAll('div.btn').forEach(div => {
