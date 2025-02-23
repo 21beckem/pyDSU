@@ -20,7 +20,6 @@ class GUI {
         });
     }
     static attemptFullscreen() {
-        return;
         let elem = document.documentElement;
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
