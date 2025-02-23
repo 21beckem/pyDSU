@@ -10,6 +10,7 @@ class Remote {
             console.error("No game code provided!");
             return;
         }
+        GUI.attemptFullscreen();
         // if trying to use differnent code than in the hash, be sure that the hash won't mess with that
         if (code != '') {
             window.location.hash = '';
