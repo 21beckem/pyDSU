@@ -1,53 +1,42 @@
-function attemptFullscreen() {
-    return;
-    let elem = document.documentElement;
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.mozRequestFullScreen) {
-        elem.mozRequestFullScreen();
-    } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
+class Remote {
+    static init() {
+        // attempt to connect to the host if room code is in hash
+        if (window.location.hash) {
+            Remote.connectWithCode();
+        }
     }
+    static async connectWithCode(code='') {
+        if (code == '' && !window.location.hash.includes('#r=')) {
+            console.error("No game code provided!");
+            return;
+        }
+        // if trying to use differnent code than in the hash, be sure that the hash won't mess with that
+        if (code != '') {
+            window.location.hash = '';
+        }
+        await Playroom.insertCoin({
+            skipLobby: true,
+            roomCode: code
+        });
+        if (Playroom.isHost()) {
+            console.error("You are the host, not good! Try Again!");
+            // refresh the page without any parameters
+            window.location.hash = '';
+            window.location = window.location.pathname;
+        }
+        console.log('waiting for handshake...');
+        
+        let slot = await Playroom.waitForPlayerState(Playroom.me(), 'handshake');
+        Playroom.me().setState('handshook', slot, true);
+        slot -= 1;
 
-    // request wake lock too
-    if (navigator.requestWakeLock) {
-        navigator.wakeLock.request("screen");
+        Remote.showRemotePage();
+        GUI.setSlot(slot);
     }
-}
-function setBposition() {
-    let dist = document.getElementById('aBtn').getBoundingClientRect().top - 127.5;
-    document.documentElement.style.setProperty('--bBtn-top', `${dist}px`);
-}
-setBposition();
-window.addEventListener('resize', setBposition);
-
-// add haptic feedback for all buttons and ensure the page is in fullscreen
-document.querySelectorAll('div.btn').forEach(div => {
-    div.addEventListener('touchstart', event => {
-        console.log(`div ${event.target.id} pressed`);
-        event.target.classList.add('pressed');
-        attemptFullscreen();
-        hapticFeedback();
-    });
-    div.addEventListener('touchend', event => {
-        console.log(`div ${event.target.id} released`);
-        event.target.classList.remove('pressed');
-        hapticFeedback();
-    });
-});
-
-// lock screen orientation to portrait
-window.addEventListener("orientationchange", function(event) {
-    if (screen.orientation.angle !== 0) {
-        screen.orientation.lock("portrait");
-    }
-});
-
-// haptic feedback
-function hapticFeedback(n=50) {
-    if (navigator.vibrate) {
-        navigator.vibrate(n);
+    static showRemotePage() {
+        _('connectPage').style.display = 'none';
+        _('RemotePage').style.display = '';
+        GUI.setBposition();
     }
 }
+Remote.init();

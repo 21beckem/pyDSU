@@ -1,6 +1,7 @@
 import eel
 import json
 import tkinter as tk
+import threading
 
 # Initialize the eel app
 eel.init("web")
@@ -15,40 +16,63 @@ root = tk.Tk()
 root.withdraw()  # Hide the tkinter window
 
 # Store player connections
-players = {}
-MAX_PLAYERS = 4
-
-def get_available_slot():
-    """Find the next available player slot."""
-    for i in range(MAX_PLAYERS):
-        if i not in players:
+players = {
+    0 : None,
+    1 : None,
+    2 : None,
+    3 : None
+}
+def getNextAvailableSlot():
+    global players
+    for i in range(4):
+        if players[i] == None:
+            return i
+    return None
+def clearReservedPlayer(id):
+    global players
+    for i in range(4):
+        if players[i] == id + '_RESERVED':
+            players[i] = None
+def getPlayerIndexById(id):
+    global players
+    for i in range(4):
+        if players[i] != None and players[i] == id:
             return i
     return None
 
-@eel.expose
-def join_game(player_id):
-    """Handle a player attempting to join the game."""
-    if len(players) >= MAX_PLAYERS:
-        return {"success": False, "message": "Game is full"}
-    
-    slot = get_available_slot()
-    if slot is not None:
-        players[slot] = player_id
-        return {"success": True, "slot": slot}
-    return {"success": False, "message": "No available slots"}
 
 @eel.expose
-def player_left(slot):
-    """Handle a player leaving the game."""
-    del players[slot]
+def EVENT_onPlayerJoin(id):
+    global players
+    i = getNextAvailableSlot()
+    if i == None:
+        return False
+    print(f"Player {id} attempting to join slot {i}")
+    players[i] = id + '_RESERVED'
+    threading.Timer(5.0, clearReservedPlayer, args=[id]).start()
+    return i + 1
 
 @eel.expose
-def receive_gyro_data(slot, data):
-    """Receive gyroscope data from players."""
-    if slot in players:
-        print(f"Received data from Player {slot}: {json.dumps(data)}")
-    else:
-        print("Received data from unknown player")
+def EVENT_handshook(id):
+    global players
+    i = getPlayerIndexById(id + '_RESERVED')
+    players[i] = id
+    print(f"Player {id} successfully joined slot {i}")
+
+@eel.expose
+def EVENT_playerQuit(id, state):
+    global players
+    i = getPlayerIndexById(id)
+    print(f"Player {id} left slot {i}")
+    players[i] = None
+
+@eel.expose
+def EVENT_onPacket(id, data):
+    global players
+    i = getPlayerIndexById(id)
+    print(f"Received packet from player {i}: {data}")
+
+
 
 if __name__ == "__main__":
     window_width = 800

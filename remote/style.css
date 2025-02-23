@@ -19,7 +19,7 @@ body {
     touch-action: manipulation;
     color: #383838;
 }
-#gameCode {
+#gameCodeInput {
     margin-top: 10px;
     font-family: inherit;
     font-size: 40px;

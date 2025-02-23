@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link href='https://fonts.googleapis.com/css?family=ADLaM Display' rel='stylesheet'>
+    <script src="https://unpkg.com/playroomkit/multiplayer.full.umd.js" crossorigin="anonymous"></script>
     <title>Wii Remote Emulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,10 +15,10 @@
             <p style="font-size: 20px; margin-bottom: 100px;">Connect to a Wii host</p>
             <a style="font-size: 30px;">Game Code:</a>
             <br>
-            <input type="text" id="gameCode" placeholder="&#9679;&#9679;&#9679;&#9679;" autocomplete="off">
+            <input type="text" id="gameCodeInput" maxlength="4" pattern="\d{4}" placeholder="&#9679;&#9679;&#9679;&#9679;" autocomplete="off">
             <br>
             <div style="height: 40px;"></div>
-            <button class="wiiUIbtn">Connect</button>
+            <button class="wiiUIbtn" onclick="Remote.connectWithCode(_('gameCodeInput').value);">Connect</button>
             <div style="height: 50px;"></div>
         </center>
     </div>
@@ -57,7 +58,7 @@
         </div>
     
         <div id="lights">
-            <div class="on" id="light1"></div>
+            <div id="light1"></div>
             <div id="light2"></div>
             <div id="light3"></div>
             <div id="light4"></div>
@@ -65,6 +66,7 @@
 
     </div>
     
+    <script src="gui.js"></script>
     <script src="remote.js"></script>
 </body>
 </html>
