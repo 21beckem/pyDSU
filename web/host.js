@@ -5,6 +5,7 @@ class Host {
         2 : null,
         3 : null
     };
+    static IdSlotLookup = {};
     static async init() {
         await Playroom.insertCoin({
             skipLobby: true,
@@ -37,6 +38,7 @@ class Host {
             console.log(`Connected! Slot: ${slot-1}`);
             await new Promise(r => setTimeout(r, 500)); // wait a bit to be sure the host registers the player
             Host.PlayerSlots[slot-1] = new Pointer(slot-1, player.id);
+            Host.IdSlotLookup[player.id] = slot-1;
 
             player.onQuit((state) => {
                 console.log(`${state.id} quit!`);
@@ -56,6 +58,7 @@ class Host {
         });
         Playroom.RPC.register('sendPacket', (data, player) => {
             eel.EVENT_onPacket(player.id, data);
+            Host.PlayerSlots[Host.IdSlotLookup[player.id]].move(-data['gyro']['z']*8, data['gyro']['x']*8);
         });
     }
 }

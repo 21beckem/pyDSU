@@ -1,7 +1,7 @@
 import eel
-import json
 import tkinter as tk
 import threading
+from pprint import pprint
 
 # Initialize the eel app
 eel.init("web")
@@ -70,9 +70,8 @@ def EVENT_playerQuit(id, state):
 def EVENT_onPacket(id, data):
     global players
     i = getPlayerIndexById(id)
-    print(f"Received packet from player {i}: {data}")
-
-
+    # prints the accel and gyro values in columns
+    #print('{:10.2f} {:10.2f} {:10.2f} {:10.2f} {:10.2f} {:10.2f}'.format(data['acc']['x'], data['acc']['y'], data['acc']['z'], data['gyro']['x'], data['gyro']['y'], data['gyro']['z']))
 
 if __name__ == "__main__":
     window_width = 800
