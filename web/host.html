@@ -60,10 +60,8 @@ body {
     mask: url('img/pointer_outline.png') 0px 0px subtract;
 }
 .pointer {
-    top: 50%;
-    left: 50%;
     position: fixed;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 50%);
     margin: 0;
     padding: 0;
     width: 65px;
@@ -72,10 +70,10 @@ body {
     mask-image: url('img/pointer_background.png');
     mask-composite: subtract;
 }
-#P1.pointer { background-position: 0px 0px; background-color: #1f8cfa; }
-#P2.pointer { background-position: 0px 66px; background-color: #f84a3c; }
-#P3.pointer { background-position: 64px 1px; background-color: #2ea463; }
-#P4.pointer { background-position: 64px 66px; background-color: #fbb432; }
+.P1.pointer { background-position: 0px 0px; background-color: #1f8cfa; }
+.P2.pointer { background-position: 0px 66px; background-color: #f84a3c; }
+.P3.pointer { background-position: 64px 1px; background-color: #2ea463; }
+.P4.pointer { background-position: 64px 66px; background-color: #fbb432; }
     </style>
     <script type="text/javascript" src="eel.js"></script>
 </head>
@@ -84,12 +82,9 @@ body {
     <center>
         <a>Game Code:</a>
         <div id="gameCode">...</div>
-        <p>Players Connected: <span id="playerCount">0</span>/4</p>
-        <div style="height: 20px;"></div>
+        <div style="height: 40px;"></div>
         <button class="wiiBtn" onclick="alert('Would start now...');">Start</button>
     </center>
-
-    <div id="P1" class="pointer"><div></div></div>
 
     <script src="host.js"></script>
 </body>

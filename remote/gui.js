@@ -1,19 +1,45 @@
 const _ = (x) => document.getElementById(x);
 class GUI {
+    static buttons = {
+        'u': 0,
+        'l': 0,
+        'r': 0,
+        'd': 0,
+        'a': 0,
+        'b': 0,
+        '-': 0,
+        'H': 0,
+        '+': 0,
+        '1': 0,
+        '2': 0
+    };
+    static b_states = [0, 0];
     static init() {
         GUI.setBposition();
         window.addEventListener('resize', GUI.setBposition);
         
         // add haptic feedback for all buttons and ensure the page is in fullscreen
-        document.querySelectorAll('div.btn').forEach(div => {
+        document.querySelectorAll('#RemotePage div.btn').forEach(div => {
             div.addEventListener('touchstart', event => {
-                console.log(`div ${event.target.id} pressed`);
+                if (event.target.getAttribute('data-key') == 'b') {
+                    GUI.b_states[event.target.id.includes('1') ? 0 : 1] = 1;
+                    GUI.buttons.b = 1;
+                } else {
+                    GUI.buttons[event.target.getAttribute('data-key')] = 1;
+                }
+                // console.log(JSON.stringify(GUI.buttons, null, 2));
                 event.target.classList.add('pressed');
                 GUI.attemptFullscreen();
                 GUI.hapticFeedback();
             });
             div.addEventListener('touchend', event => {
-                console.log(`div ${event.target.id} released`);
+                if (event.target.getAttribute('data-key') == 'b') {
+                    GUI.b_states[event.target.id.includes('1') ? 0 : 1] = 0;
+                    GUI.buttons.b = parseInt(GUI.b_states[0] || GUI.b_states[1]);
+                } else {
+                    GUI.buttons[event.target.getAttribute('data-key')] = 0;
+                }
+                // console.log(JSON.stringify(GUI.buttons, null, 2));
                 event.target.classList.remove('pressed');
                 GUI.hapticFeedback();
             });
