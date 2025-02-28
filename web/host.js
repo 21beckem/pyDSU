@@ -58,7 +58,10 @@ class Host {
         });
         Playroom.RPC.register('sendPacket', (data, player) => {
             eel.EVENT_onPacket(player.id, data);
-            Host.PlayerSlots[Host.IdSlotLookup[player.id]].move(-data['gyro']['z']*8, data['gyro']['x']*8);
+            Host.PlayerSlots[Host.IdSlotLookup[player.id]].move(
+                -data['gyro']['z'],
+                -data['gyro']['x']
+            );
         });
     }
 }
@@ -66,6 +69,7 @@ class Pointer {
     constructor(slot, playerId) {
         this.id = playerId;
         this.pos = { x: 0, y: 0 };
+        this.hoveredElements = [];
         this.DIV = document.createElement('div');
         this.DIV.setAttribute('class', `P${slot+1} pointer`);
         this.DIV.appendChild(document.createElement('div'));
@@ -78,12 +82,36 @@ class Pointer {
     moveTo(x, y) {
         this.pos = { x: x, y: y };
         this.DIV.style.left = `${x}px`;
-        this.DIV.style.bottom = `${y}px`;
+        this.DIV.style.top = `${y}px`;
+        this.handleMoveEvents();
     }
     move(x, y) {
-        this.pos = { x: this.pos.x + x, y: this.pos.y + y };
+        const speedFactor = 0.03; // Adjust this value to change the speed
+        const xSpeed = document.documentElement.clientWidth * speedFactor;
+        const ySpeed = document.documentElement.clientHeight * speedFactor;
+
+        this.pos = { x: this.pos.x + x * xSpeed, y: this.pos.y + y * ySpeed };
+        this.pos = {
+            x: Math.min(Math.max(this.pos.x, 0), document.documentElement.clientWidth),
+            y: Math.min(Math.max(this.pos.y, 0), document.documentElement.clientHeight)
+        };
         this.DIV.style.left = `${this.pos.x}px`;
-        this.DIV.style.bottom = `${this.pos.y}px`;
+        this.DIV.style.top = `${this.pos.y}px`;
+        this.handleMoveEvents();
+    }
+    handleMoveEvents() {
+        let oldEls = [...this.hoveredElements];
+        this.hoveredElements = [];
+        document.elementsFromPoint(this.pos.x, this.pos.y).forEach(el => {
+            if (el.tagName != 'BUTTON') return;
+            if (el.classList.contains('pointer')) return;
+            if (oldEls.includes(el)) {
+                oldEls.splice(oldEls.indexOf(el), 1);
+            }
+            this.hoveredElements.push(el);
+            el.classList.add('hover');
+        });
+        oldEls.forEach(e =>  e.classList.remove('hover') );
     }
     destroy() {
         this.DIV.remove();

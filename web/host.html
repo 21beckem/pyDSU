@@ -48,10 +48,11 @@ body {
     cursor: pointer;
     transition: transform 0.15s;
 }
-.wiiBtn:hover {
+.wiiBtn.hover, .wiiBtn:hover {
     transform: scale(1.1);
 }
 .pointer div {
+    pointer-events: none;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -60,8 +61,9 @@ body {
     mask: url('img/pointer_outline.png') 0px 0px subtract;
 }
 .pointer {
+    pointer-events: none;
     position: fixed;
-    transform: translate(-50%, 50%);
+    transform: translate(-50%, 0);
     margin: 0;
     padding: 0;
     width: 65px;

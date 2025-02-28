@@ -45,6 +45,9 @@ class Remote {
     static Acel = null;
     static Gyro = null;
     static sendPackets() {
+        if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") { // request permission for IOS 13+ devices
+            DeviceMotionEvent.requestPermission();
+        }
         if ('Accelerometer' in window && 'Gyroscope' in window) { // if remote device supports motion
             Remote.Acel = new Accelerometer({ frequency: 60 });
             Remote.Gyro = new Gyroscope({ frequency: 60 });
