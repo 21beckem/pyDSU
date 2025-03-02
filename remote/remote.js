@@ -3,11 +3,16 @@ class Remote {
         // attempt to connect to the host if room code is in hash
         if (window.location.hash) {
             Remote.connectWithCode();
+        } else {
+            _('connectingText').style.display = 'none';
+            _('connectForm').style.display = '';
         }
     }
     static async connectWithCode(code='') {
         if (code == '' && !window.location.hash.includes('#r=')) {
             console.error("No game code provided!");
+            _('connectingText').style.display = 'none';
+            _('connectForm').style.display = '';
             return;
         }
         GUI.attemptFullscreen();
@@ -42,55 +47,29 @@ class Remote {
         // start sending packets to the host
         Remote.sendPackets();
     }
-    static Acel = null;
-    static Gyro = null;
+    static Acel = [0, 0, 0];
+    static Gyro = [0, 0, 0];
+    static handleMotion(e) {
+        Remote.Acel = {x: e.acceleration.x, y: e.acceleration.y, z: e.acceleration.z};
+        Remote.sendPacketNow();
+    }
+    static handleOrientation(e) {
+        Remote.Gyro = {x: e.alpha, y: e.beta, z: e.gamma};
+    }
+    sendPacketNow() {
+        Playroom.RPC.call('sendPacket', {
+            buttons : GUI.buttons,
+            acc : Remote.Acel,
+            gyro : Remote.Gyro
+        }, Playroom.RPC.Mode.HOST);
+        console.log('sent packet');
+    }
     static sendPackets() {
-        if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") { // request permission for IOS 13+ devices
+        if ( DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function" ) {
             DeviceMotionEvent.requestPermission();
         }
-        if ('Accelerometer' in window && 'Gyroscope' in window) { // if remote device supports motion
-            Remote.Acel = new Accelerometer({ frequency: 60 });
-            Remote.Gyro = new Gyroscope({ frequency: 60 });
-            Remote.Gyro.addEventListener('reading', e => {
-                Playroom.RPC.call('sendPacket', {
-                    buttons : GUI.buttons,
-                    acc : {
-                        x: Remote.Acel.x,
-                        y: Remote.Acel.y,
-                        z: Remote.Acel.z
-                    },
-                    gyro : {
-                        x: e.target.x,
-                        y: e.target.y,
-                        z: e.target.z
-                    }
-                }, Playroom.RPC.Mode.HOST);
-                console.log('sent packet');
-            }, true);
-            Remote.Acel.addEventListener('error', (event) => {
-                console.error('Accelerometer error:', event);
-            });
-            Remote.Gyro.addEventListener('error', (event) => {
-                console.error('Gyroscope error:', event);
-            });
-            Remote.Acel.start();
-            Remote.Gyro.start();
-        } else { // if remote device doesn't support motion
-            alert('This device does not support motion. If you beleive this is a mistake, please click here for assistance.');
-            setInterval(() => {
-                console.log('Packet sending...');
-                Playroom.RPC.call('sendPacket', {
-                    buttons : GUI.buttons,
-                    acc : {
-                        x: 0, y: 0, z: 0
-                    },
-                    gyro : {
-                        a: 0, b: 0, g: 0
-                    }
-                }, Playroom.RPC.Mode.HOST);
-                console.log('Packet sent!');
-            }, 1000/60);
-        }
+        window.removeEventListener("devicemotion", Remote.handleMotion);
+        window.removeEventListener("deviceorientation", Remote.handleOrientation);
     }
 }
 Remote.init();

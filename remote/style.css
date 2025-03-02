@@ -51,7 +51,7 @@ body {
     user-select: none; /* Standard syntax */
     display: flex;
     align-items: center;
-    height: 100vh;
+    height: 100dvh;
     margin: 0;
     overflow: hidden;
     flex-direction: column;

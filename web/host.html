@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Becker WII</title>
     <script src="https://unpkg.com/playroomkit/multiplayer.full.umd.js" crossorigin="anonymous"></script>
+    <script src="qrcode.min.js"></script>
     <style>
 @font-face {
     font-family: 'Wii';
@@ -19,19 +20,22 @@ body {
     color: #fff;
     text-align: center;
     text-shadow: 0px 0px 10px #000;
-    margin: 50px 0 30px 0;
+    margin: 0;
 }
-#gameCode {
+.blueBorder {
     font-family: 'Wii', sans-serif, monospace;
     border: 5px solid #54b9de;
     border-radius: 10px;
+    padding: 10px;
     width: fit-content;
-    padding: 0 20px 0 30px;
-    font-size: 70px;
-    letter-spacing: 15px;
     color: #323232;
     background-color: #e0e5ea;
     box-shadow: 2px 2px 18px 13px white inset;
+}
+#gameCode {
+    padding: 0 20px 0 30px;
+    font-size: 25px;
+    letter-spacing: 15px;
 }
 .wiiBtn {
     font-family: 'Wii', sans-serif;
@@ -80,11 +84,24 @@ body {
     <script type="text/javascript" src="eel.js"></script>
 </head>
 <body>
-    <h1 id="title">Becker WII</h1>
     <center>
-        <a>Game Code:</a>
-        <div id="gameCode">...</div>
-        <div style="height: 40px;"></div>
+        <h1 id="title">BeckerBox</h1>
+        <h2 style="margin: 0; color: gray">Time to connect your Remotes</h2>
+    </center>
+    <table style="width: 100%; margin-bottom: 20px;">
+        <tr><td><center>
+            <h3>Scan this with your phone:</h3>
+            <div id="qrcode" class="blueBorder" style="width: 230px; height: 230px;"></div>
+        </center></td>
+        <td><center>
+            <h3>Open this link on your phone:</h3>
+            <div class="blueBorder">https://21beckem.github.io/pyDSU</div>
+            <h3>Then use this game code:</h3>
+            <div id="gameCode" class="blueBorder">...</div>
+        </center></td></tr>
+    </table>
+    <center>
+        <h1 style="transform: translateY(-170px); color: gray; height: 0; margin: 0; padding: 0;">OR</h1>
         <button class="wiiBtn" onclick="alert('Would start now...');">Start</button>
     </center>
 

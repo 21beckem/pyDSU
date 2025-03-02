@@ -20,6 +20,14 @@ class Host {
             console.log("New Game Started!");
         }
         document.getElementById("gameCode").innerText = Playroom.getRoomCode();
+        new QRCode(document.getElementById("qrcode"), {
+            text: "https://21beckem.github.io/pyDSU/remote/#r=R" + Playroom.getRoomCode(),
+            width: 200,
+            height: 200,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
     
         // expose all events
         Playroom.onPlayerJoin(async (player) => {

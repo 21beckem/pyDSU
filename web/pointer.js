@@ -63,6 +63,10 @@ class Pointer {
         } catch (e) {}
     }
     newPacket(data) {
+        this.move(
+            -data['gyro']['z'],
+            -data['gyro']['x']
+        );
         // send button events
         for (const [key, value] of Object.entries(data.buttons)) {
             if (value != this.states[key]) {
@@ -75,10 +79,6 @@ class Pointer {
             }
         }
         this.states = data.buttons;
-        this.move(
-            -data['gyro']['z'],
-            -data['gyro']['x']
-        );
     }
     center() {
         this.moveTo(document.documentElement.clientWidth/2, document.documentElement.clientHeight/2);

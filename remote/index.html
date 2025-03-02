@@ -12,14 +12,17 @@
 <body>
     <div id="connectPage">
         <center>
-            <h1 style="font-size: 45px; margin-top: 50px; margin-bottom: 10px;">Becker Wii<br>Remote</h1>
-            <p style="font-size: 20px; margin-bottom: 100px;">Connect to a Wii host</p>
-            <a style="font-size: 30px;">Game Code:</a>
-            <br>
-            <input type="text" id="gameCodeInput" maxlength="4" pattern="\d{4}" placeholder="&#9679;&#9679;&#9679;&#9679;" autocomplete="off">
-            <br>
-            <div style="height: 40px;"></div>
-            <button class="wiiUIbtn" onclick="Remote.connectWithCode(_('gameCodeInput').value);">Connect</button>
+            <h1 style="font-size: 45px; margin-top: 50px; margin-bottom: 10px;">BeckerBox<br>Remote</h1>
+            <p id="connectingText" style="margin-top: 40px; font-size: 20px;">Connecting to BeckerBox host<br><br>Please wait...</p>
+            <div id="connectForm" style="display: none;">
+                <p style="font-size: 20px; margin-bottom: 100px;">Connect to a Wii host</p>
+                <a style="font-size: 30px;">Game Code:</a>
+                <br>
+                <input type="text" id="gameCodeInput" maxlength="4" pattern="\d{4}" placeholder="&#9679;&#9679;&#9679;&#9679;" autocomplete="off">
+                <br>
+                <div style="height: 40px;"></div>
+                <button class="wiiUIbtn" onclick="Remote.connectWithCode(_('gameCodeInput').value);">Connect</button>
+            </div>
             <div style="height: 50px;"></div>
         </center>
     </div>
