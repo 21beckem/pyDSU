@@ -56,7 +56,7 @@ class Remote {
     static handleOrientation(e) {
         Remote.Gyro = {x: e.alpha, y: e.beta, z: e.gamma};
     }
-    sendPacketNow() {
+    static sendPacketNow() {
         Playroom.RPC.call('sendPacket', {
             buttons : GUI.buttons,
             acc : Remote.Acel,
@@ -68,8 +68,8 @@ class Remote {
         if ( DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function" ) {
             DeviceMotionEvent.requestPermission();
         }
-        window.removeEventListener("devicemotion", Remote.handleMotion);
-        window.removeEventListener("deviceorientation", Remote.handleOrientation);
+        window.addEventListener("devicemotion", Remote.handleMotion);
+        window.addEventListener("deviceorientation", Remote.handleOrientation);
     }
 }
 Remote.init();
